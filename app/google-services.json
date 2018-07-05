@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "513574678369",
+    "firebase_url": "https://readr-1cb5c.firebaseio.com",
+    "project_id": "readr-1cb5c",
+    "storage_bucket": "readr-1cb5c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513574678369:android:fbbbfc7bd02517c8",
+        "android_client_info": {
+          "package_name": "redsail.readr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513574678369-kotb0vm6mrrs6nspa2o4gp63u7ifpmt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "redsail.readr",
+            "certificate_hash": "bb1804f88fc60304c7399d2c244f8c8873a9ff3d"
+          }
+        },
+        {
+          "client_id": "513574678369-jvqe7j0298ko27egv9v0orrdvs9ttkna.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASy0JeTGsIJXMGUGqD4KNLCYTY-iTyXLU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "513574678369-jvqe7j0298ko27egv9v0orrdvs9ttkna.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
