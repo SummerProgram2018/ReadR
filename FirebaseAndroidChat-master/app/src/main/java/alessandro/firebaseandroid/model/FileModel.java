@@ -1,8 +1,5 @@
 package alessandro.firebaseandroid.model;
 
-/**
- * Created by Alessandro Barreto on 22/06/2016.
- */
 public class FileModel {
 
     private String type;

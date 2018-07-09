@@ -1,7 +1,5 @@
 package alessandro.firebaseandroid;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SearchView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +49,7 @@ import alessandro.firebaseandroid.model.ChatModel;
 import alessandro.firebaseandroid.model.FileModel;
 import alessandro.firebaseandroid.model.MapModel;
 import alessandro.firebaseandroid.model.UserModel;
+import alessandro.firebaseandroid.search.FriendListActivity;
 import alessandro.firebaseandroid.util.Util;
 import alessandro.firebaseandroid.view.FullScreenImageActivity;
 import alessandro.firebaseandroid.view.LoginActivity;
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             finish();
         }else{
             bindViews();
-            verificaUsuarioLogado();
+            verifyUser();
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .enableAutoManage(this, this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API)
@@ -154,21 +152,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             }
         }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
-
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
         return true;
     }
 
@@ -176,6 +164,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
+            case R.id.search:
+                startActivity(new Intent(this, FriendListActivity.class));
+                finish();
+                break;
             case R.id.sendPhoto:
                 verifyStoragePermissions();
 //                photoCameraIntent();
@@ -226,10 +218,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(intent);
     }
 
-
-    /**
-     * Envia o arvquivo para o firebase
-     */
     private void sendFileFirebase(StorageReference storageReference, final Uri file){
         if (storageReference != null){
             final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
@@ -256,9 +244,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    /**
-     * Envia o arvquivo para o firebase
-     */
     private void sendFileFirebase(StorageReference storageReference, final File file){
         if (storageReference != null){
             Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
@@ -286,9 +271,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    /**
-     * Obter local do usuario
-     */
     private void locationPlacesIntent(){
         try {
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -314,9 +296,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         return image;
     }
 
-    /**
-     * Enviar foto tirada pela camera
-     */
     private void photoCameraIntent(){
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -339,9 +318,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    /**
-     * Enviar foto pela galeria
-     */
     private void photoGalleryIntent(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -349,18 +325,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture_title)), IMAGE_GALLERY_REQUEST);
     }
 
-    /**
-     * Enviar msg de texto simples para chat
-     */
     private void sendMessageFirebase(){
         ChatModel model = new ChatModel(userModel,edMessage.getText().toString(), Calendar.getInstance().getTime().getTime()+"",null);
         mFirebaseDatabaseReference.child(CHAT_REFERENCE).push().setValue(model);
         edMessage.setText(null);
     }
 
-    /**
-     * Ler collections chatmodel Firebase
-     */
     private void readMessageFirebase(){
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         final ChatFirebaseAdapter firebaseAdapter = new ChatFirebaseAdapter(mFirebaseDatabaseReference.child(CHAT_REFERENCE),userModel.getName(),this);
@@ -381,10 +351,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         rvListMessage.setAdapter(firebaseAdapter);
     }
 
-    /**
-     * Verificar se usuario está logado
-     */
-    private void verificaUsuarioLogado(){
+    private void verifyUser(){
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null){
@@ -396,9 +363,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    /**
-     * Vincular views com Java API
-     */
     private void bindViews(){
         contentRoot = findViewById(R.id.contentRoot);
         edMessage = (EmojiconEditText)findViewById(R.id.editTextMessage);
@@ -412,9 +376,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mLinearLayoutManager.setStackFromEnd(true);
     }
 
-    /**
-     * Sign Out no login
-     */
     private void signOut(){
         mFirebaseAuth.signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
@@ -422,12 +383,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         finish();
     }
 
-    /**
-     * Checks if the app has permission to write to device storage
-     *
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     */
     public void verifyStoragePermissions() {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);

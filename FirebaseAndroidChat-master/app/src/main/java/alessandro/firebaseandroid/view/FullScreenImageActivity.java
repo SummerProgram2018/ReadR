@@ -75,7 +75,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
         nameUser = getIntent().getStringExtra("nameUser");
         urlPhotoUser = getIntent().getStringExtra("urlPhotoUser");
         urlPhotoClick = getIntent().getStringExtra("urlPhotoClick");
-        Log.i("TAG","imagem recebida "+urlPhotoClick);
         tvUser.setText(nameUser); // Name
         Glide.with(this).load(urlPhotoUser).centerCrop().transform(new CircleTransform(this)).override(40,40).into(ivUser);
 
@@ -83,7 +82,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
             @Override
             public void onLoadStarted(Drawable placeholder) {
-                progressDialog.setMessage("Carregando Imagem...");
+                progressDialog.setMessage("Loading image...");
                 progressDialog.show();
             }
 
@@ -95,7 +94,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
             @Override
             public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                Toast.makeText(FullScreenImageActivity.this,"Erro, tente novamente",Toast.LENGTH_LONG).show();
+                Toast.makeText(FullScreenImageActivity.this,"Failed to load image",Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
         });

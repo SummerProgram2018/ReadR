@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase Android</string>
+    <string name="app_name">ReadR</string>
     <string name="sendPhoto">Photo Camera</string>
     <string name="sign_out">Sign Out</string>
     <string name="select_picture_title">Get Photo From</string>
@@ -9,4 +9,9 @@
     <string name="locationTo">My Location</string>
     <string name="search_title">search</string>
     <string name="search_hint">search...</string>
+    <string name="search">Search</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
 </resources>

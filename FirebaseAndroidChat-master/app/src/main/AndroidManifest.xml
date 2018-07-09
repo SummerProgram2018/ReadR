@@ -25,16 +25,23 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <meta-data android:name="android.app.searchable"
-                    android:resource="@xml/searchable" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchResultsActivity">
+
+        <activity android:name=".view.LoginActivity"/>
+
+        <activity android:name=".search.FriendListActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable">
+            </meta-data>
         </activity>
-        <activity android:name=".view.LoginActivity" />
+
         <activity
             android:theme="@style/AppThemeFullScreenImage"
             android:name=".view.FullScreenImageActivity">

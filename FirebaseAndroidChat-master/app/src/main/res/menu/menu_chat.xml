@@ -4,6 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:title="@string/search"
+        android:id="@+id/search"
+        app:showAsAction="never"/>
+
+    <item
         android:title="@string/sendPhoto"
         android:id="@+id/sendPhoto"
         app:showAsAction="never"/>
@@ -17,12 +22,6 @@
         android:title="@string/sendLocation"
         android:id="@+id/sendLocation"
         app:showAsAction="never"/>
-
-    <item android:id="@+id/search"
-        android:title="@string/search_title"
-        android:icon="@drawable/ic_search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:title="@string/sign_out"
