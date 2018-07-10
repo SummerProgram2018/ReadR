@@ -25,4 +25,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- search -->
+    <string name="search_title">Search</string>
 </resources>
