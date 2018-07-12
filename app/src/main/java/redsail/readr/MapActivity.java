@@ -9,9 +9,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -28,12 +31,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.firebase.database.ValueEventListener;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -59,6 +65,7 @@ public class MapActivity extends AppCompatActivity
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         ActivityCompat.OnRequestPermissionsResultCallback,
+        GoogleMap.OnInfoWindowClickListener,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -98,6 +105,8 @@ public class MapActivity extends AppCompatActivity
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        addListener();
+
         buildGoogleApiClient();
 
     }
@@ -113,16 +122,14 @@ public class MapActivity extends AppCompatActivity
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            //add shit
+                            bookMap.moveCamera(CameraUpdateFactory
+                                    .newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                             if (location != null) {
                                 // Logic to handle location object
                             }
                         }
                     });
         }
-
-        addMarkers();
-
     }
 
     @Override
@@ -157,6 +164,8 @@ public class MapActivity extends AppCompatActivity
 
         bookMap.setOnMyLocationButtonClickListener(this);
         bookMap.setOnMyLocationClickListener(this);
+        bookMap.setOnInfoWindowClickListener(this);
+
         enableMyLocation();
     }
 
@@ -198,7 +207,6 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false;
@@ -206,7 +214,7 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Unimplemented: Context switch to personal profile", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -245,52 +253,16 @@ public class MapActivity extends AppCompatActivity
     }
 
 
-    private void addMarkers() {
-
-        bookMap.addMarker(new MarkerOptions()
-                .position(USER1)
-                .title("username1")
-                .snippet("BooklistLink1")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-        bookMap.addMarker(new MarkerOptions()
-                .position(USER2)
-                .title("username2")
-                .snippet("BooklistLink2")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-        bookMap.addMarker(new MarkerOptions()
-                .position(USER3)
-                .title("username3")
-                .snippet("BooklistLink3")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-    }
-
-
-    LocationCallback mLocationCallback = new LocationCallback(){
+    LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             for (Location location : locationResult.getLocations()) {
                 Log.i("MainActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-
+                writeLocation(location);
             }
+        }
 
-            try {
-                Toast.makeText(getActivity(), "yo", Toast.LENGTH_SHORT).show();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        };
-
+        ;
     };
 
     @Override
@@ -298,47 +270,100 @@ public class MapActivity extends AppCompatActivity
 
     }
 
-//    private void writeNewPost(String userId, String username, String title, String body, String image) {
-//        // Create new post at /user-posts/$userid/$postid and at
-//        // /posts/$postid simultaneously
-//        String key = mDatabase.child("users").push().getKey();
-//        Post post = new Post(userId, username, title, body, image, latLng);
-//        Map<String, Object> postValues = post.toMap();
-//
-//        Map<String, Object> childUpdates = new HashMap<>();
-//        childUpdates.put("/posts/" + key, postValues);
-//        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-//
-//        mDatabase.updateChildren(childUpdates);
-//    }
-
-    public static Activity getActivity() throws
-            IllegalAccessException,
-            NoSuchFieldException,
-            NoSuchMethodException,
-            ClassNotFoundException,
-            InvocationTargetException {
-        Class activityThreadClass = Class.forName("android.app.ActivityThread");
-        Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-        Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-        activitiesField.setAccessible(true);
-
-        Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
-        if (activities == null)
-            return null;
-
-        for (Object activityRecord : activities.values()) {
-            Class activityRecordClass = activityRecord.getClass();
-            Field pausedField = activityRecordClass.getDeclaredField("paused");
-            pausedField.setAccessible(true);
-            if (!pausedField.getBoolean(activityRecord)) {
-                Field activityField = activityRecordClass.getDeclaredField("activity");
-                activityField.setAccessible(true);
-                Activity activity = (Activity) activityField.get(activityRecord);
-                return activity;
-            }
-        }
-
-        return null;
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, "Unimplemented: Context switch to specific profile:" + marker.getTitle(),
+                Toast.LENGTH_SHORT).show();
     }
+
+    private void writeLocation(Location location) {
+        // Create new post at /user-posts/$userid/$postid and at
+        // /posts/$postid simultaneously
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/locations/" + currentUser.getUid() + "/lat/", location.getLatitude());
+        childUpdates.put("/locations/" + currentUser.getUid() + "/long/", location.getLongitude());
+
+        mDatabase.updateChildren(childUpdates);
+    }
+
+    public void addListener() {
+        FirebaseDatabase.getInstance().getReference().child("locations").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                HashMap<String, HashMap> dataMap = (HashMap) dataSnapshot.getValue();
+
+                if (bookMap != null) {
+                    bookMap.clear();
+                }
+
+                for (String key : dataMap.keySet()) {
+                    String lat = dataMap.get(key).get("lat").toString();
+                    String lng = dataMap.get(key).get("long").toString();
+                    setMarker(key, lat, lng);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("MapActivity", "loadPost:Shat itself", databaseError.toException());
+                // ...
+            }
+        });
+    }
+
+    public void setMarker(String userId, final String lat, final String lng) {
+
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent( new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                HashMap<String, String> dataMap = (HashMap) dataSnapshot.getValue();
+
+                String username = dataMap.get("username").toString();
+                LatLng userLocation = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+
+                MarkerOptions uMarkOpts = new MarkerOptions()
+                        .position(userLocation)
+                        .title(username)
+                        .snippet("Empty Booklist");
+
+                switch(username){
+                    case "Daniel":
+                        BitmapDrawable bitmapdraw1=(BitmapDrawable)getResources().getDrawable(R.drawable.daniel);
+                        Bitmap b1=bitmapdraw1.getBitmap();
+                        Bitmap smallMarker1 = Bitmap.createScaledBitmap(b1, 84, 84, false);
+                        uMarkOpts.icon(BitmapDescriptorFactory.fromBitmap(smallMarker1));
+                        break;
+                    case "Frances":
+                        BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.frances);
+                        Bitmap b2=bitmapdraw2.getBitmap();
+                        Bitmap smallMarker2 = Bitmap.createScaledBitmap(b2, 84, 84, false);
+                        uMarkOpts.icon(BitmapDescriptorFactory.fromBitmap(smallMarker2));
+                        break;
+                    case "Jack":
+                        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.jack);
+                        Bitmap b=bitmapdraw.getBitmap();
+                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 84, 84, false);
+                        uMarkOpts.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                        break;
+                    default:
+                        break;
+                }
+                if (uMarkOpts.getIcon() != null) {
+                    bookMap.addMarker(uMarkOpts);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("MapActivity", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+    }
+
 }
