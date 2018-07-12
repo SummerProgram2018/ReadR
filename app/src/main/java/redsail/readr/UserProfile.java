@@ -1,6 +1,8 @@
 package redsail.readr;
 
 import android.app.usage.UsageEvents;
+import android.location.Location;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.*;
 import java.time.*;
@@ -15,6 +17,7 @@ public class UserProfile {
     public LocalDate birthday;
     public String communityRole;
     public String occupation;
+    public Location uLocation;
 //    public ArrayList<Achievement> achievements;
 //    public ArrayList<Conversation> conversations;
     public ArrayList<UsageEvents.Event> eventHistory;
