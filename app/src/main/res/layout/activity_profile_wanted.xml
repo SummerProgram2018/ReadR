@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="127dp"
+        android:layout_height="125dp"
+        android:layout_alignBottom="@+id/textView13"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="203dp"
+        android:layout_height="60dp"
+        android:layout_alignEnd="@+id/textView15"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="17dp"
+        android:text="(Username)"
+        tools:layout_editor_absoluteX="165dp"
+        tools:layout_editor_absoluteY="16dp"
+        tools:textSize="20sp"
+        android:layout_alignRight="@+id/textView15" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/textView9"
+        android:layout_marginEnd="148dp"
+        android:text="Rating:"
+        tools:layout_editor_absoluteX="171dp"
+        tools:layout_editor_absoluteY="89dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="148dp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView14"
+        android:layout_marginTop="85dp"
+        android:text="(rating)"
+        tools:layout_editor_absoluteX="223dp"
+        tools:layout_editor_absoluteY="89dp" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/textView14"
+        android:layout_marginEnd="141dp"
+        android:text="Bookcoin:"
+        tools:layout_editor_absoluteX="162dp"
+        tools:layout_editor_absoluteY="123dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="141dp" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="61dp"
+        android:layout_marginTop="116dp"
+        android:text="(coin no.)"
+        tools:layout_editor_absoluteX="243dp"
+        tools:layout_editor_absoluteY="123dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="61dp" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="346dp"
+        android:layout_height="47dp"
+        android:layout_below="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:text="(Bio)"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="141dp" />
+
+    <RelativeLayout
+        android:id="@+id/profile_buttons"
+        android:layout_width="361dp"
+        android:layout_height="53dp"
+        android:layout_below="@+id/textView15"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <Button
+                android:id="@+id/button_user_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Info" />
+
+            <Button
+                android:id="@+id/button_user_wanted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wanted" />
+
+            <Button
+                android:id="@+id/button_user_owned"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Owned" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="331dp"
+        android:layout_height="256dp"
+
+        android:layout_below="@+id/profile_buttons"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(wanted book list)"/>
+    </ScrollView>
+</RelativeLayout>
