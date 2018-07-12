@@ -51,6 +51,22 @@
         <activity
             android:name=".MapActivity"
             android:label="User Map"></activity>
+		<activity
+            android:name=".AddBookActivity"
+            android:label="Add New Book">
+        </activity>
+        <activity android:name=".ProfileActivity"
+            android:label="Profile">
+        </activity>
+        <activity android:name=".ProfileInfoActivity"
+            android:label="Profile">
+        </activity>
+        <activity android:name=".ProfileWantedActivity"
+            android:label="Profile">
+        </activity>
+        <activity android:name=".ProfileOwnActivity"
+            android:label="Profile">
+        </activity>
     </application>
 
 </manifest>
