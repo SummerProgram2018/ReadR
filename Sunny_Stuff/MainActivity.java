@@ -30,7 +30,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnQrCode; // 扫码
     TextView tvResult; // 结果
 
-
+    private HttpURLConnection httpURLConnection;
+    protected static final int SUCCESS=1;
+    protected static final int ERROR=2;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case SUCCESS:
+                    String text=(String)msg.obj;
+                    tvResult.setText(text);//更新主界面
+                    break;
+                case ERROR:
+                    Toast.makeText(MainActivity.this,"请求失败",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -81,8 +97,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (resultCode) {
             case RESULT_OK:
+                new Thread(){
+                    public void run(){
+                        try {
+                            //1.利用URL 类的实力接受URL地址
+                            URL url=new URL("https://api.douban.com/v2/book/isbn/9787535619969");
+                            //2.通过路径得到一个连接http的打开方式
+                            httpURLConnection=(HttpURLConnection)url.openConnection();
+                            //设置请求方式，默认是GET
+                            httpURLConnection.setRequestMethod("GET");
+                            //3.判断服务器返回的状态
+                            int code=httpURLConnection.getResponseCode();
+                            if(code==200){
+                                //4.连接成功的conn得到输入流
+                                InputStream is=httpURLConnection.getInputStream();
+                                String result=StreamTools.readStream(is);
+                                //5.将获取的数据信息发送给UI主线程Handle，通过message作为桥梁
+                                Message msg=Message.obtain();
+                                msg.obj=result;
+                                msg.what=SUCCESS;
+                                handler.sendMessage(msg);//和handleMessage对应
+                            }
 
-               tvResult.setText(data.getStringExtra("result"));  //or do sth
+                        }catch (Exception e){
+                            Message msg=Message.obtain();
+                            msg.what=ERROR;
+                            handler.sendMessage(msg);
+                            e.printStackTrace();
+                        }
+                    }
+
+                }.start();
+         //       tvResult.setText(data.getStringExtra("result"));  //or do sth
 
                 break;
         }
